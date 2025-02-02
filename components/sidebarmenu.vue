@@ -1,7 +1,7 @@
 <template>
   <div class="relative">
     <div
-      class="fixed right-0 top-0 h-screen bg-white shadow-lg transition-all duration-300 flex flex-col items-center py-4"
+      class="fixed z-10 right-0 top-0 h-screen bg-white shadow-lg transition-all duration-300 flex flex-col items-center py-4"
       :class="visible ? 'w-64' : 'w-32'">
       <button @click="toggleSidebar"
         class="absolute left-0 mt-10 -translate-x-1/2 bg-blue-500 w-8 h-8 flex items-center justify-center rounded-full shadow-md">
@@ -24,10 +24,10 @@
                 placeholder="جستجو کنید..." required />
             </div>
           </form>
-          <div class="flex py-3 bg-sky-700 mt-10 pr-6"  dir="rtl">
+          <div class="flex py-3 bg-sky-700 mt-10 pr-6" dir="rtl">
             <img src="/Hicon.png" alt="">
             <p class="pr-2">
-              داشبورد 
+              داشبورد
             </p>
           </div>
         </div>
@@ -43,9 +43,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-
 const visible = ref(false);
+
 
 const toggleSidebar = () => {
   visible.value = !visible.value;
