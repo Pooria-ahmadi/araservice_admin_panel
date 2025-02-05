@@ -24,7 +24,7 @@
                 placeholder="جستجو کنید..." required />
             </div>
           </form>
-          <div class="flex py-3 bg-sky-700 mt-10 pr-6" dir="rtl">
+          <div class="flex py-3 bg-sky-700 mt-10 pr-6 rounded-xl" dir="rtl">
             <img src="/Hicon.png" alt="">
             <p class="pr-2">
               داشبورد
