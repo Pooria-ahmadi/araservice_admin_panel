@@ -13,6 +13,11 @@ export default defineNuxtConfig({
             },
         },
     },
+    runtimeConfig: {
+        public: {
+            mapIrApiKey: process.env.MAP_IR_API_KEY
+        }
+    },
 
     primevue: {
         options: {

@@ -100,24 +100,26 @@
           </AutoComplete>
           <label for="on_label">جستجو در محله ها و مناطق</label>
         </FloatLabel>
-        <MapView />
+        <MapView :coordinates="coordinates" />
         <div class="flex flex-col md:flex-row gap-4 mt-7">
           <div class="md:w-80">
             <FloatLabel>
-              <InputText size="small" class="w-full" id="over_label" v-model="formData.fk_elementcategory" />
-              <label for="over_label">برند دستگاه</label>
+              <Select size="small" class="w-full" v-model="activeBrand" :options="brands" @change="selectBrand"
+                optionLabel="brandName" />
+              <label for="on_label">برند دستگاه</label>
             </FloatLabel>
           </div>
           <div class="md:w-80">
             <FloatLabel>
-              <InputText size="small" class="w-full" id="over_label" v-model="formData.fk_elemet" />
-              <label for="over_label">نوع دستگاه</label>
+              <Select size="small" class="w-full" v-model="activeDeviceType" :options="deviceTypes"
+                @change="selectDeviceType" optionLabel="deviceTypeName" />
+              <label for="on_label">نوع دستگاه</label>
             </FloatLabel>
           </div>
           <div class="md:w-80">
             <FloatLabel>
-              <AutoComplete class="w-full" v-model="formData.fk_subelement" :suggestions="items" @complete="autoSearch"
-                size="small" dropdown />
+              <Select size="small" class="w-full" v-model="activeDeviceModel" :options="deviceModels"
+                optionLabel="deviceModelName" />
               <label for="on_label">مدل دستگاه</label>
             </FloatLabel>
           </div>
@@ -188,8 +190,13 @@
 <script setup>
 import { useNuxtApp } from '#app';
 import { ref, onMounted, toRaw } from 'vue'
+import { useRuntimeConfig } from '#app';
 
+const config = useRuntimeConfig();
 const { $servapi } = useNuxtApp();
+
+
+
 
 const seacharea = ref(null)
 
@@ -244,7 +251,6 @@ const searchInUsers = async () => {
     });
     userSearchResault.value = response.data
   } catch (error) {
-    console.log(error)
   }
   seacharea.value.classList.toggle('hidden');
 }
@@ -253,10 +259,8 @@ const getProvinces = async () => {
   try {
     const response = await $servapi.get('provinces');
     provinces.value = response.data
-    console.log(provinces.value)
 
   } catch (error) {
-    console.log(error)
   }
 }
 
@@ -269,11 +273,9 @@ const getProvinceCities = async () => {
         }
       });
       cities.value = response.data
-      console.log(cities.value)
     }
 
   } catch (error) {
-    console.log(error)
   }
 }
 
@@ -306,6 +308,8 @@ const selectTechnicianselecttype = () => {
 }
 
 onMounted(() => {
+  //getBrands();
+
   getProvinces()
 })
 
@@ -314,12 +318,69 @@ onMounted(() => {
 
 
 
+const brands = ref([]);
+const deviceTypes = ref([]);
+const deviceModels = ref([]);
+
+const activeBrand = ref(null);
+const activeDeviceType = ref(null);
+const activeDeviceModel = ref(null);
+
+const getBrands = async () => {
+  try {
+    const response = await $servapi.get('brands');
+    brands.value = response.data;
+  } catch (error) {
+    console.error('Error fetching brands:', error);
+  }
+};
+
+const getDeviceTypes = async () => {
+  try {
+    if (!activeBrand.value) return;
+    const response = await $servapi.get('device-types', {
+      params: { brandId: toRaw(activeBrand.value.pk_brand) },
+    });
+    deviceTypes.value = response.data;
+    activeDeviceType.value = null;
+    deviceModels.value = [];
+  } catch (error) {
+    console.error('Error fetching device types:', error);
+  }
+};
+
+const getDeviceModels = async () => {
+  try {
+    if (!activeDeviceType.value) return;
+    const response = await $servapi.get('device-models', {
+      params: { deviceTypeId: toRaw(activeDeviceType.value.pk_deviceType) },
+    });
+    deviceModels.value = response.data;
+    activeDeviceModel.value = null;
+  } catch (error) {
+    console.error('Error fetching device models:', error);
+  }
+};
+
+const selectBrand = () => {
+  getDeviceTypes();
+};
+
+const selectDeviceType = () => {
+  getDeviceModels();
+};
+
+
+
+
+const coordinates = ref([])
+
 const searchedResponse = ref([]);
 const selected = ref(null);
 const isFetching = ref(false);
 const location = ref({ coords: { latitude: 0, longitude: 0 } });
 const gettingLocation = ref(false);
-const xapikey = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjZkMjgzMjk0MDljYThhYmMzMTY5ZjM3YjE0NDdhZjE0ODI1MDQ5ZTk3ZjM0YzBkNTgxNTZiNTRlNTQ0MmUzM2Y1NzQyNjI2ZmQ1MzM0YWYzIn0.eyJhdWQiOiIxMjUxMCIsImp0aSI6IjZkMjgzMjk0MDljYThhYmMzMTY5ZjM3YjE0NDdhZjE0ODI1MDQ5ZTk3ZjM0YzBkNTgxNTZiNTRlNTQ0MmUzM2Y1NzQyNjI2ZmQ1MzM0YWYzIiwiaWF0IjoxNjExNjU1MTk2LCJuYmYiOjE2MTE2NTUxOTYsImV4cCI6MTYxNDE2MDc5Niwic3ViIjoiIiwic2NvcGVzIjpbImJhc2ljIl19.GyGG-KOFjQMecMRrUhLq23MYuG4k1Z6SN0CtfBtWzQCaIXYmxEJNEiX1WX6-vbPxnAPJUDGF2ulc49-AEKMCpBKNT4_BZHnFzFvQxPWUTZJ5tD6JErtdzs6BQGlzYT_n4Bg02UEFcIrrcv6PXqAbh96EHJQZOQa392xK0CCCXbbrgABqRvXQpyfAN3fIj7s_N0sjDGDNAtLbWE9kJAhgi3myRSSHJPGOF5bR4B1ES7EROILpFnvum9Bk0YZo4-zpX0lXTU81nlLuAav4fLsrlEYvq5ZFrE33WtfKTSxra6IViOA9qWVkOcrDAIKHVhGcCarqeoMDZGCbwMbrt1s8PA"
+const xapikey = config.public.mapIrApiKey;
 
 
 
@@ -355,16 +416,12 @@ const searchAddress = async (event) => {
   }
 };
 
-// تابع تغییر مرکز نقشه
-const changeMapCenter = (option) => {
-  // منطق تغییر مرکز نقشه را اینجا اعمال کنید
-  console.log("مرکز نقشه تغییر کرد:", option);
-};
-
 // تابع انتخاب آیتم
 const handleSelect = (event) => {
   selected.value = event.value;
-  console.log("آیتم انتخاب شد:", selected.value);
+  coordinates.value = []
+  coordinates.value.push(selected.value.geom.coordinates[1])
+  coordinates.value.push(selected.value.geom.coordinates[0])
 };
 
 
