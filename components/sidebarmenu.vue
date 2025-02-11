@@ -20,16 +20,20 @@
                 </svg>
               </div>
               <input type="search" id="search" dir="rtl"
-                class="block w-full py-3 mt-10 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50"
+                class="block w-full py-3 mt-10 ps-10 text-sm border border-gray-300 rounded-lg bg-gray-50"
                 placeholder="جستجو کنید..." required />
             </div>
           </form>
-          <div class="flex py-3 bg-sky-700 mt-10 pr-6 rounded-xl" dir="rtl">
-            <img src="/Hicon.png" alt="">
+          <NuxtLink to="/" class="flex py-3 bg-sky-100 mt-10 pr-6 rounded-xl" dir="rtl">
             <p class="pr-2">
               داشبورد
             </p>
-          </div>
+          </NuxtLink>
+          <NuxtLink to="/acceptance" class="flex py-3 bg-sky-100 mt-4 pr-6 rounded-xl" dir="rtl">
+            <p class="pr-2">
+              ثبت پذیرش
+            </p>
+          </NuxtLink>
         </div>
         <div v-else>
           <img src="/logosidebar.png" alt="">
