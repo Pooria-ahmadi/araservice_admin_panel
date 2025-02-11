@@ -2,12 +2,6 @@
   "name": "homeease_panel",
   "private": true,
   "type": "module",
-  "config": {
-    "nuxt": {
-      "port": "4000",
-      "host": "0.0.0.0"
-    }
-  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -15,7 +9,7 @@
     "start": "nuxt start",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "deploy": "pm2 start npm --name homeease_panel -- start"
+    "deploy": "PORT=4000 pm2 start npm --name homeease_panel -- start"
   },
   "dependencies": {
     "@primevue/themes": "^4.2.5",
