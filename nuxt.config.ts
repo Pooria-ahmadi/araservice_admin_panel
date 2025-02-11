@@ -1,7 +1,10 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 import Aura from '@primevue/themes/aura';
 
 export default defineNuxtConfig({
+    modules: [
+        '@primevue/nuxt-module',
+        '@nuxtjs/tailwindcss',
+    ],
     app: {
         head: {
             htmlAttrs: {
@@ -10,17 +13,21 @@ export default defineNuxtConfig({
             },
         },
     },
-    compatibilityDate: '2024-11-01',
-    devtools: { enabled: true },
-    modules: [
-        '@primevue/nuxt-module',
-        '@nuxtjs/tailwindcss',
-    ],
+
     primevue: {
         options: {
+            ripple: true,
+            inputVariant: 'filled',
             theme: {
-                preset: Aura
+                preset: Aura,
+                options: {
+                    prefix: 'p',
+                    darkModeSelector: false,
+                    cssLayer: false
+                }
             }
         }
-    }
+    },
+
+    compatibilityDate: '2025-02-06'
 })

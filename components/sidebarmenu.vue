@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <div class="relative hidden lg:block">
     <div
       class="fixed z-10 right-0 top-0 h-screen bg-white shadow-lg transition-all duration-300 flex flex-col items-center py-4"
       :class="visible ? 'w-64' : 'w-32'">
