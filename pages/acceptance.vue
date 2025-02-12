@@ -261,7 +261,7 @@
           </div>
           <div>
             <div
-              class="w-12 h-10 flex justify-center items-center rounded-lg bg-blue-800 text-white text-lg cursor-pointer">
+              class="w-12 h-10 hidden flex justify-center items-center rounded-lg bg-blue-800 text-white text-lg cursor-pointer">
               <img src="/Microphone 1.png" alt="">
             </div>
           </div>
