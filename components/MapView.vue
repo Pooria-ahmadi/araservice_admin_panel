@@ -54,6 +54,13 @@ onMounted(async () => {
         map.value.removeLayer(marker.value);
       }
 
+      const customIcon = L.icon({
+        iconUrl: "/marker-icon-2x.png", 
+        iconSize: [32, 32], 
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      });
+
       marker.value = L.marker([lat, lng]).addTo(map.value)
         .bindPopup(`موقعیت: ${lat}, ${lng}`)
         .openPopup();
@@ -61,7 +68,7 @@ onMounted(async () => {
       map.value.setView([lat, lng], view);
     }
 
-    
+
     addMarker(35.730041131496804, 51.39303922428917, 11);
 
     watchEffect(() => {
