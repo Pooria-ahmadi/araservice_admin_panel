@@ -17,7 +17,9 @@ export default defineNuxtConfig({
     },
     runtimeConfig: {
         public: {
-            mapIrApiKey: process.env.MAP_IR_API_KEY
+            mapIrApiKey: process.env.MAP_IR_API_KEY,
+            apiBaseUrlAcc: process.env.API_BASE_URL_ACC,
+            apiBaseUrlServ: process.env.API_BASE_URL_SERV
         }
     },
 

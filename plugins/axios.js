@@ -1,12 +1,14 @@
 import axios from 'axios';
 
 export default defineNuxtPlugin((nuxtApp) => {
+  const { public: { apiBaseUrlAcc, apiBaseUrlServ } } = useRuntimeConfig();
+
   const accapi = axios.create({
-    baseURL: 'http://localhost:8000/api/', 
+    baseURL: apiBaseUrlAcc,
   });
 
   const servapi = axios.create({
-    baseURL: 'http://localhost:8080/api/v1/company/',
+    baseURL: apiBaseUrlServ,
   });
 
   const updateAuthHeader = (token) => {
