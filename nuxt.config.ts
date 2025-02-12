@@ -1,6 +1,8 @@
 import Aura from '@primevue/themes/aura';
 
 export default defineNuxtConfig({
+    css: ['~/assets/css/global.css'],
+    
     modules: [
         '@primevue/nuxt-module',
         '@nuxtjs/tailwindcss',

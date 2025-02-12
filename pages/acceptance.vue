@@ -3,6 +3,7 @@
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
+    <Toast />
 
     <div class="flex justify-center items-center min-h-screen bg-gray-100">
       <div class="w-5/6 bg-white p-6 rounded-lg shadow-lg md:mr-28">
@@ -20,19 +21,20 @@
         <div class="flex flex-col md:flex-row gap-4 mt-7">
           <div class="md:w-80">
             <FloatLabel>
-              <InputText size="small" class="w-full" id="over_label" v-model="formData.customerfullname" />
-              <label for="over_label">مشتری</label>
+              <InputText size="small" class="w-full" id="over_label" v-model="formData.customerfullname"
+                @input="searchInUsers" />
+              <label for="over_label">نام و نام خانودگی مشتری</label>
             </FloatLabel>
           </div>
           <div class="md:w-80">
             <FloatLabel>
-              <InputText size="small" class="w-full" id="over_label" v-model="formData.phone" />
+              <InputText size="small" class="w-full" id="over_label" v-model="formData.phone" @input="searchInUsers" />
               <label for="over_label">شماره تلفن</label>
             </FloatLabel>
           </div>
           <div class="md:w-80">
             <FloatLabel>
-              <InputText size="small" class="w-full" id="over_label" v-model="formData.mobile" />
+              <InputText size="small" class="w-full" id="over_label" v-model="formData.mobile" @input="searchInUsers" />
               <label for="over_label">شماره موبایل</label>
             </FloatLabel>
           </div>
@@ -53,8 +55,8 @@
         <div class="relative">
           <div class="absolute z-10 bg-white border rounded-2xl text-sm font-thin user-search-box hidden"
             ref="seacharea">
-            <div v-for="(item, index) in userSearchResault" @click="selectSearchedUser">
-              <div class="flex flex-col md:flex-row gap-4 py-3">
+            <div v-for="(item, index) in userSearchResault" @click="selectSearchedUser(item)">
+              <div class="flex flex-col md:flex-row gap-4 pt-3">
                 <div class="md:w-80 mt-3">
                   {{ item.customerfullname }}
                 </div>
@@ -68,28 +70,53 @@
                   {{ item.subscriptionid }}
                 </div>
               </div>
+              <div class="flex flex-col md:flex-row gap-4 pb-3">
+                {{ item.address }}
+              </div>
               <hr>
             </div>
           </div>
         </div>
         <div class="grid grid-cols-3 gap-x-4 mt-7">
           <div>
-            <FloatLabel>
-              <Select size="small" class="w-full" v-model="activeProvince" :options="provinces" @Change="selectProvince"
-                optionLabel="province" />
-              <label for="on_label">استان</label>
-            </FloatLabel>
+            <Select size="small" v-model="activeProvince" :options="provinces" filter optionLabel="province"
+              placeholder="استان" class="w-full" @change="selectProvince">
+              <template #value="slotProps">
+                <div v-if="slotProps.value && slotProps.value.province" class="flex items-center">
+                  <div>{{ slotProps.value.province }}</div>
+                </div>
+                <span v-else class="text-gray-400">
+                  استان
+                </span>
+              </template>
+              <template #option="slotProps">
+                <div class="flex items-center">
+                  <div>{{ slotProps.option.province }}</div>
+                </div>
+              </template>
+            </Select>
+          </div>
+          <div>
+            <Select size="small" v-model="activeCity" :options="cities" filter optionLabel="city" placeholder="شهر"
+              class="w-full" @change="selectCity">
+              <template #value="slotProps">
+                <div v-if="slotProps.value && slotProps.value.city" class="flex items-center">
+                  <div>{{ slotProps.value.city }}</div>
+                </div>
+                <span v-else class="text-gray-400">
+                  شهر
+                </span>
+              </template>
+              <template #option="slotProps">
+                <div class="flex items-center">
+                  <div>{{ slotProps.option.city }}</div>
+                </div>
+              </template>
+            </Select>
           </div>
           <div>
             <FloatLabel>
-              <Select size="small" class="w-full" v-model="activeCity" :options="cities" @Change="selectCity"
-                optionLabel="city" />
-              <label for="on_label">شهر</label>
-            </FloatLabel>
-          </div>
-          <div>
-            <FloatLabel>
-              <InputText size="small" class="w-full" id="over_label" v-model="formData.fk_useraddress" />
+              <InputText size="small" class="w-full" id="over_label" v-model="activeUser.address" />
               <label for="over_label">آدرس</label>
             </FloatLabel>
           </div>
@@ -103,25 +130,58 @@
         <MapView :coordinates="coordinates" />
         <div class="flex flex-col md:flex-row gap-4 mt-7">
           <div class="md:w-80">
-            <FloatLabel>
-              <Select size="small" class="w-full" v-model="activeBrand" :options="brands" @change="selectBrand"
-                optionLabel="brandName" />
-              <label for="on_label">برند دستگاه</label>
-            </FloatLabel>
+            <Select size="small" v-model="activeBrand" :options="brands" filter optionLabel="elementcategory"
+              placeholder="برند دستگاه" class="w-full" @change="selectBrand">
+              <template #value="slotProps">
+                <div v-if="slotProps.value && slotProps.value.elementcategory" class="flex items-center">
+                  <div>{{ slotProps.value.elementcategory }}</div>
+                </div>
+                <span v-else class="text-gray-400">
+                  برند دستگاه
+                </span>
+              </template>
+              <template #option="slotProps">
+                <div class="flex items-center">
+                  <div>{{ slotProps.option.elementcategory }}</div>
+                </div>
+              </template>
+            </Select>
           </div>
           <div class="md:w-80">
-            <FloatLabel>
-              <Select size="small" class="w-full" v-model="activeDeviceType" :options="deviceTypes"
-                @change="selectDeviceType" optionLabel="deviceTypeName" />
-              <label for="on_label">نوع دستگاه</label>
-            </FloatLabel>
+            <Select size="small" v-model="activeDeviceType" :options="deviceTypes" filter optionLabel="element"
+              placeholder="نوع دستگاه" class="w-full" @change="selectDeviceType">
+              <template #value="slotProps">
+                <div v-if="slotProps.value && slotProps.value.element" class="flex items-center">
+                  <div>{{ slotProps.value.element }}</div>
+                </div>
+                <span v-else class="text-gray-400">
+                  نوع دستگاه
+                </span>
+              </template>
+              <template #option="slotProps">
+                <div class="flex items-center">
+                  <div>{{ slotProps.option.element }}</div>
+                </div>
+              </template>
+            </Select>
           </div>
           <div class="md:w-80">
-            <FloatLabel>
-              <Select size="small" class="w-full" v-model="activeDeviceModel" :options="deviceModels"
-                optionLabel="deviceModelName" />
-              <label for="on_label">مدل دستگاه</label>
-            </FloatLabel>
+            <Select size="small" v-model="activeDeviceModel" :options="deviceModels" filter optionLabel="subelement"
+              placeholder="مدل دستگاه" class="w-full" @change="selectDeviceModel">
+              <template #value="slotProps">
+                <div v-if="slotProps.value && slotProps.value.subelement" class="flex items-center">
+                  <div>{{ slotProps.value.subelement }}</div>
+                </div>
+                <span v-else class="text-gray-400">
+                  مدل دستگاه
+                </span>
+              </template>
+              <template #option="slotProps">
+                <div class="flex items-center">
+                  <div>{{ slotProps.option.subelement }}</div>
+                </div>
+              </template>
+            </Select>
           </div>
           <div class="flex items-center border rounded-xl text-center border-gray-500 w-24">
             <label for="vue-checkbox-list" class="w-12 py-2 ms-2 text-sm font-medium text-black">گارانتی</label>
@@ -131,39 +191,71 @@
         </div>
         <div class="flex flex-col md:flex-row gap-4 mt-7">
           <div class="md:w-1/3">
-            <FloatLabel>
-              <Select size="small" class="w-full" v-model="activeReceptiontype" :options="receptiontypes"
-                @Change="selectReceptiontype" optionLabel="receptiontype" />
-              <label for="on_label">نوع سرویس</label>
-            </FloatLabel>
+            <Select size="small" v-model="activeReceptiontype" :options="receptiontypes" filter
+              optionLabel="receptiontype" placeholder="نوع سرویس" class="w-full" @change="selectReceptiontype">
+              <template #value="slotProps">
+                <div v-if="slotProps.value && slotProps.value.receptiontype" class="flex items-center">
+                  <div>{{ slotProps.value.receptiontype }}</div>
+                </div>
+                <span v-else class="text-gray-400">
+                  نوع سرویس
+                </span>
+              </template>
+              <template #option="slotProps">
+                <div class="flex items-center">
+                  <div>{{ slotProps.option.receptiontype }}</div>
+                </div>
+              </template>
+            </Select>
           </div>
           <div class="md:w-1/3">
-            <FloatLabel>
-              <Select size="small" class="w-full" v-model="activeTechnicianselecttype"
-                @change="selectTechnicianselecttype" :options="technicianselecttypes"
-                optionLabel="technicianselecttype" />
-              <label for="on_label">روش انتخاب سرویسکار</label>
-            </FloatLabel>
+            <Select size="small" v-model="activeTechnicianselecttype" :options="technicianselecttypes" filter
+              optionLabel="technicianselecttype" placeholder="روش انتخاب سرویسکار" class="w-full"
+              @change="selectTechnicianselecttype">
+              <template #value="slotProps">
+                <div v-if="slotProps.value && slotProps.value.technicianselecttype" class="flex items-center">
+                  <div>{{ slotProps.value.technicianselecttype }}</div>
+                </div>
+                <span v-else class="text-gray-400">
+                  روش انتخاب سرویسکار
+                </span>
+              </template>
+              <template #option="slotProps">
+                <div class="flex items-center">
+                  <div>{{ slotProps.option.technicianselecttype }}</div>
+                </div>
+              </template>
+            </Select>
           </div>
           <div class="md:w-1/3">
-            <FloatLabel>
-              <AutoComplete class="w-full" v-model="formData.Fk_device_brand" :suggestions="items"
-                @complete="autoSearch" size="small" dropdown />
-              <label for="on_label">سرویس کار</label>
-            </FloatLabel>
+            <Select size="small" v-model="activeTechnician" :options="technicians" filter
+              optionLabel="technicianfullname" placeholder="سرویس کار" class="w-full" @change="selectTechnician">
+              <template #value="slotProps">
+                <div v-if="slotProps.value && slotProps.value.technicianfullname" class="flex items-center">
+                  <div>{{ slotProps.value.technicianfullname }}</div>
+                </div>
+                <span v-else class="text-gray-400">
+                  سرویس کار
+                </span>
+              </template>
+              <template #option="slotProps">
+                <div class="flex items-center">
+                  <div>{{ slotProps.option.technicianfullname }}</div>
+                </div>
+              </template>
+            </Select>
           </div>
-
         </div>
         <div class="flex flex-col md:flex-row gap-4 mt-7 items-center">
           <div class="text-white md:w-80 text-center w-full">
             <FloatLabel>
-              <InputText size="small" id="on_label" v-model="value3" class="w-full h-24" />
+              <InputText size="small" id="on_label" class="w-full h-24" v-model="formData.issue" />
               <label for="on_label">مشکل</label>
             </FloatLabel>ّ
           </div>
           <div class="text-white md:w-80 text-center w-full">
             <FloatLabel>
-              <InputText size="small" id="on_label" v-model="value3" class="w-full h-24" />
+              <InputText size="small" id="on_label" class="w-full h-24" v-model="formData.operatordescription" />
               <label for="on_label">توضیحات اپراتور</label>
             </FloatLabel>ّ
           </div>
@@ -191,9 +283,28 @@
 import { useNuxtApp } from '#app';
 import { ref, onMounted, toRaw } from 'vue'
 import { useRuntimeConfig } from '#app';
+import { useToast } from "primevue/usetoast";
+const toast = useToast();
 
 const config = useRuntimeConfig();
 const { $servapi } = useNuxtApp();
+
+
+
+const getTechnicians = async () => {
+  try {
+    const response = await $servapi.get('technicians');
+    technicians.value = response.data
+  } catch (error) {
+  }
+}
+
+const technicians = ref([])
+const activeTechnician = ref({})
+const selectTechnician = () => {
+  formData.value.fk_technician = toRaw(activeTechnician.value.id)
+}
+
 
 
 
@@ -237,6 +348,9 @@ const activeReceptiontype = ref(receptiontypes.value[0])
 const activeTechnicianselecttype = ref(technicianselecttypes.value[0])
 const activeProvince = ref({})
 const activeCity = ref({})
+const activeUser = ref({})
+
+
 
 
 const searchInUsers = async () => {
@@ -259,7 +373,7 @@ const getProvinces = async () => {
   try {
     const response = await $servapi.get('provinces');
     provinces.value = response.data
-
+    getBrands();
   } catch (error) {
   }
 }
@@ -279,19 +393,90 @@ const getProvinceCities = async () => {
   }
 }
 
-const selectSearchedUser = () => {
-  userSearchResault.value = []
-  seacharea.value.classList.toggle('hidden');
+const selectSearchedUser = (user) => {
+  activeUser.value = user
+  activeProvince.value = { 'pk_province': user.pk_province, 'province': user.province }
+
+  formData.value.fk_province = user.pk_province
+  formData.value.fk_city = user.pk_city
+  formData.value.fk_customer = user.id
+  formData.value.fk_useraddress = user.fk_useraddress
+  formData.value.customerfullname = user.customerfullname
+  formData.value.mobile = user.mobile
+  formData.value.phone = user.phone
+  formData.value.subscriptionid = user.subscriptionid
+
+  coordinates.value = []
+  coordinates.value[0] = user.lat
+  coordinates.value[1] = user.lon
+
+  $servapi.get('province-cities', {
+    params: {
+      provinceId: user.pk_province,
+    }
+  })
+    .then((response) => {
+      cities.value = response.data
+      activeCity.value = response.data.find(city => city.pk_city === user.pk_city) || {};
+      userSearchResault.value = []
+      seacharea.value.classList.toggle('hidden');
+    })
 }
+
 
 const submitForm = async () => {
   try {
-
+    if (!formData.value.fk_technician)
+      toast.add({ severity: 'error', summary: 'خطای اطلاعات ورودی', detail: 'تکنسین را انتخاب نمایید', life: 2000 });
+    else if (!formData.value.fk_useraddress)
+      toast.add({ severity: 'error', summary: 'خطای اطلاعات ورودی', detail: 'آدرس را انتخاب نمایید', life: 2000 });
+    else if (!formData.value.fk_element)
+      toast.add({ severity: 'error', summary: 'خطای اطلاعات ورودی', detail: 'دستگاه را انتخاب نمایید', life: 2000 });
+    else if (!formData.value.issue)
+      toast.add({ severity: 'error', summary: 'خطای اطلاعات ورودی', detail: 'مشکل را وارد نمایید', life: 2000 });
+    else {
+      await $servapi.post('create-reception', formData.value);
+      toast.add({ severity: 'success', summary: 'تایید!', detail: 'اطلاعات با موفقیت ثبت شد', life: 2000 });
+      resetFormData();
+    }
   } catch (error) {
 
   }
 }
 
+const resetFormData = () => {
+  formData.value = {
+    fk_receptiontype: activeReceptiontype.value.pk_receptiontype,
+    fk_technicianselecttype: activeTechnicianselecttype.value.pk_technicianselecttype,
+    fk_receptionstatus: 1,
+    createType: 'full',
+    customerfullname: '',
+    phone: '',
+    mobile: '',
+    subscriptionid: '',
+    fk_province: '',
+    fk_city: '',
+    fk_customer: '',
+    fk_useraddress: '',
+    fk_elementcategory: '',
+    fk_element: '',
+    fk_subelement: '',
+    fk_technician: '',
+    issue: '',
+    operatordescription: '',
+  };
+  activeUser.value = {};
+  activeProvince.value = {};
+  activeCity.value = {};
+  activeTechnician.value = {}
+  activeBrand.value = {};
+  activeDeviceType.value = {};
+  activeDeviceModel.value = {};
+  coordinates.value = [];
+  coordinates.value[0] = 35.730041131496804;
+  coordinates.value[1] = 51.39303922428917;
+  selected.value = null;
+};
 
 const selectCity = () => {
   formData.value.fk_city = toRaw(activeCity.value.pk_city)
@@ -308,7 +493,10 @@ const selectTechnicianselecttype = () => {
 }
 
 onMounted(() => {
-  //getBrands();
+  formData.value.fk_receptiontype = activeReceptiontype.value.pk_receptiontype
+  formData.value.fk_technicianselecttype = activeTechnicianselecttype.value.pk_technicianselecttype
+  formData.value.fk_receptionstatus = 1
+  formData.value.createType = 'full'
 
   getProvinces()
 })
@@ -328,8 +516,9 @@ const activeDeviceModel = ref(null);
 
 const getBrands = async () => {
   try {
-    const response = await $servapi.get('brands');
+    const response = await $servapi.get('element-categories');
     brands.value = response.data;
+    getTechnicians()
   } catch (error) {
     console.error('Error fetching brands:', error);
   }
@@ -338,8 +527,8 @@ const getBrands = async () => {
 const getDeviceTypes = async () => {
   try {
     if (!activeBrand.value) return;
-    const response = await $servapi.get('device-types', {
-      params: { brandId: toRaw(activeBrand.value.pk_brand) },
+    const response = await $servapi.get('element-category-elements', {
+      params: { elementCategoryId: toRaw(activeBrand.value.pk_elementcategory) },
     });
     deviceTypes.value = response.data;
     activeDeviceType.value = null;
@@ -352,8 +541,8 @@ const getDeviceTypes = async () => {
 const getDeviceModels = async () => {
   try {
     if (!activeDeviceType.value) return;
-    const response = await $servapi.get('device-models', {
-      params: { deviceTypeId: toRaw(activeDeviceType.value.pk_deviceType) },
+    const response = await $servapi.get('element-subelements', {
+      params: { elementId: toRaw(activeDeviceType.value.pk_element) },
     });
     deviceModels.value = response.data;
     activeDeviceModel.value = null;
@@ -363,12 +552,17 @@ const getDeviceModels = async () => {
 };
 
 const selectBrand = () => {
+  formData.value.fk_elementcategory = toRaw(activeBrand.value.pk_elementcategory)
   getDeviceTypes();
 };
 
 const selectDeviceType = () => {
+  formData.value.fk_element = toRaw(activeDeviceType.value.pk_element)
   getDeviceModels();
 };
+const selectDeviceModel = () => {
+  formData.value.fk_subelement = toRaw(activeDeviceModel.value.pk_subelement)
+}
 
 
 
