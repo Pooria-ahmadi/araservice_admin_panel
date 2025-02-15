@@ -59,7 +59,7 @@ const login = async () => {
         const access_token = response.data.access_token;
         localStorage.setItem('jwt_token', access_token);
         $updateAuthHeader(access_token);
-        router.push('/acceptance');
+        router.push('/');
     } catch (error) {
         errorMessage.value = error.response?.data?.message || 'Login failed!';
     }

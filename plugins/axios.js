@@ -16,6 +16,13 @@ export default defineNuxtPlugin((nuxtApp) => {
     servapi.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   };
 
+  if (import.meta.client) {
+    const token = localStorage.getItem('jwt_token');
+    if (token) {
+      updateAuthHeader(token);
+    }
+  }
+
   const checkInternetConnection = () => {
     return navigator.onLine;
   };
