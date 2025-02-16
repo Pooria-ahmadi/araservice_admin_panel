@@ -12,7 +12,10 @@
     "deploy": "PORT=4000 pm2 start npm --name homeease_panel -- start"
   },
   "dependencies": {
+    "@iconify-json/uil": "^1.2.3",
+    "@nuxtjs/i18n": "^9.2.0",
     "@pinia/nuxt": "^0.10.1",
+    "@primevue/forms": "^4.2.5",
     "@primevue/themes": "^4.2.5",
     "axios": "^1.7.9",
     "leaflet": "^1.9.4",
@@ -21,9 +24,11 @@
     "nuxt": "^3.15.2",
     "primevue": "^4.2.5",
     "vue": "latest",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@nuxt/icon": "^1.10.3",
     "@nuxtjs/tailwindcss": "^6.13.1",
     "@primevue/nuxt-module": "^4.2.5"
   }

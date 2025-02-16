@@ -55,14 +55,14 @@ onMounted(async () => {
       }
 
       const customIcon = L.icon({
-        iconUrl: "/marker-icon-2x.png", 
-        iconSize: [32, 32], 
+        iconUrl: "/marker-icon-2x.png",
+        iconSize: [32, 32],
         iconAnchor: [16, 32],
         popupAnchor: [0, -32]
       });
 
       marker.value = L.marker([lat, lng]).addTo(map.value)
-        .bindPopup(`موقعیت: ${lat}, ${lng}`)
+        .bindPopup(` ${lat}, ${lng}`)
         .openPopup();
 
       map.value.setView([lat, lng], view);
@@ -83,11 +83,11 @@ onMounted(async () => {
 <style>
 .map-container {
   width: 100%;
-  height: 230px;
+  height: 300px;
 }
 
 #map {
   width: 100%;
-  height: 230px;
+  height: 300px;
 }
 </style>

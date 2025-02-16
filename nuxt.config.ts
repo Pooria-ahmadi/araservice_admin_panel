@@ -1,13 +1,20 @@
 import Aura from '@primevue/themes/aura';
 
 export default defineNuxtConfig({
-    css: ['~/assets/css/global.css'],
-    
+    css: [
+        '~/assets/css/global.css'
+    ],
+
     modules: [
         '@primevue/nuxt-module',
         '@nuxtjs/tailwindcss',
         '@pinia/nuxt',
+        '@nuxtjs/i18n',
+        '@nuxt/icon',
     ],
+    icon: {
+        collections: ['uil'],
+    },
     app: {
         head: {
             htmlAttrs: {
@@ -23,7 +30,16 @@ export default defineNuxtConfig({
             apiBaseUrlServ: process.env.API_BASE_URL_SERV
         }
     },
-
+    i18n: {
+        locales: [
+            { code: 'fa', iso: 'fa-IR', dir: 'rtl', name: 'فارسی' },
+            { code: 'en', iso: 'en-US', dir: 'ltr', name: 'English' }
+        ],
+        defaultLocale: 'fa',
+        strategy: 'no_prefix',
+        detectBrowserLanguage: false,
+        vueI18n: './i18n.config.ts',
+    },
     primevue: {
         options: {
             ripple: true,
@@ -33,7 +49,7 @@ export default defineNuxtConfig({
                 options: {
                     prefix: 'p',
                     darkModeSelector: false,
-                    cssLayer: false
+                    cssLayer: false,
                 }
             }
         }

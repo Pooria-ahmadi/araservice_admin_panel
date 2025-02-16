@@ -1,13 +1,16 @@
 <template>
-    <FloatLabel>
-        <AutoComplete v-model="selected" :suggestions="searchedResponse" fluid size="small" class="mt-7"
-            optionLabel="address" @complete="searchAddress" field="title" @item-select="selectSearchedMap">
-        </AutoComplete>
-        <label for="on_label">جستجو در محله ها و مناطق</label>
-    </FloatLabel>
+    <section class="mt-3">
+        <FloatLabel>
+            <AutoComplete v-model="selected" :suggestions="searchedResponse" fluid size="small" class="mt-1"
+                optionLabel="address" @complete="searchAddress" field="title" @item-select="selectSearchedMap">
+            </AutoComplete>
+            <label for="on_label">{{ $t('search_places') }}</label>
+        </FloatLabel>
+    </section>
 </template>
+
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { ref } from 'vue';
 import { useRuntimeConfig } from '#app';
 const emit = defineEmits(["update-coordinates"]);
 
@@ -41,25 +44,23 @@ const searchAddress = async (event) => {
             },
         });
 
-        if (!response.ok) throw new Error("خطا در دریافت داده‌ها");
+        if (!response.ok) throw new Error($t('error.fetch'));
 
         const data = await response.json();
         searchedResponse.value = data.value || [];
     } catch (error) {
-        console.error("خطا در جستجو:", error);
+        console.error($t('error.search'), error);
     } finally {
         isFetching.value = false;
     }
 };
 
-// تابع انتخاب آیتم
 const selectSearchedMap = (event) => {
     selected.value = event.value;
     const coordinates = [
         selected.value.geom.coordinates[1],
         selected.value.geom.coordinates[0],
     ];
-    emit("update-coordinates",coordinates)
+    emit("update-coordinates", coordinates)
 };
-
 </script>
