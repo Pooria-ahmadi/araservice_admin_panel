@@ -7,7 +7,6 @@ export const useTabsStore = defineStore('tabs', {
   }),
   actions: {
     addTab(tab) {
-      console.log(tab)
       if (!this.tabs.find((t) => t.pk_menu === tab.pk_menu))
         this.tabs.push(tab);
     },

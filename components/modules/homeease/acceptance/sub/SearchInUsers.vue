@@ -5,8 +5,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-4">
                     <div class="relative">
                         <FloatLabel variant="on">
-                            <InputText size="small" class="w-full" v-model="user.customerfullname"
-                                @input="searchInUsers" />
+                            <InputText size="small" ref="customerfullnameRef" class="w-full"
+                                v-model="user.customerfullname" @input="searchInUsers" />
                             <label>{{ $t('customer_fullname') }}</label>
                         </FloatLabel>
                     </div>
@@ -105,6 +105,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import debounce from 'lodash/debounce'
 import { useLoadingStore } from '@/stores/loading';
 
+const customerfullnameRef = ref(null);
 const loadingStore = useLoadingStore();
 const emit = defineEmits(["select-searched-user"]);
 const toast = useToast();
@@ -199,6 +200,10 @@ const handleClickOutside = (event) => {
 }
 
 onMounted(() => {
+    nextTick(() => {
+            customerfullnameRef.value.$el.focus();
+    });
+
     getProvinces()
     document.addEventListener('click', handleClickOutside)
 })

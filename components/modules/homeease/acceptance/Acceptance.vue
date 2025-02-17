@@ -91,7 +91,6 @@ const selectTechnicianDetails = (item) => {
 }
 
 const submitForm = async () => {
-    console.log(formData.value)
     try {
         if (!formData.value.fk_technician)
             toast.add({ severity: 'error', summary: 'خطای اطلاعات ورودی', detail: 'تکنسین را انتخاب نمایید', life: 2000 });
