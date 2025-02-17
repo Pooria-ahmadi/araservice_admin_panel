@@ -10,20 +10,13 @@
       <div class="flex flex-col items-center justify-center w-full mt-6">
         <div v-if="visible">
           <img src="/layout/logo.png" alt="" class="mx-auto">
-          <form>
-            <div class="relative">
-              <div class="absolute inset-y-0 end-6 flex items-center ps-3 pointer-events-none">
-                <svg class="w-4 h-4 dark:text-sky-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                  viewBox="0 0 20 20">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                </svg>
-              </div>
-              <input type="search" id="search" dir="rtl"
-                class="block w-full py-3 mt-10 ps-10 text-sm border border-gray-300 rounded-lg bg-gray-50"
-                placeholder="جستجو کنید..." required />
+          <div class="relative">
+            <div class="absolute inset-y-0 end-6 flex items-center ps-3 pointer-events-none">
             </div>
-          </form>
+            <input type="search" id="search" dir="rtl"
+              class="block w-full py-3 mt-10 ps-10 text-sm border border-gray-300 rounded-lg bg-gray-50"
+              placeholder="جستجو کنید..." required />
+          </div>
           <NuxtLink to="/" class="flex py-3 bg-sky-100 mt-10 pr-6 rounded-xl" dir="rtl">
             <p class="pr-2">
               داشبورد

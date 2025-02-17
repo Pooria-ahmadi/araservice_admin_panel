@@ -10,5 +10,10 @@
 body,
 * {
   font-family: vazir !important;
+  font-size: 13px;
 }
 
+.p-tooltip .p-tooltip-text {
+  font-size: 12px;
+  padding: 4px 8px;
+}

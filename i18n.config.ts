@@ -17,6 +17,13 @@ export default {
         email_invalid: 'آدرس ایمیل نامعتبر است.',
         password_required: 'پسورد الزامی است.',
       },
+      toolbar: {
+        print: 'پرینت',
+        list: 'رفتن به لیست',
+        refresh: 'رفرش فرم',
+        note: 'یادداشت',
+        guide: 'راهنما',
+      },
       date: 'تاریخ پذیرش',
       acceptance_time: 'ساعت پذیرش',
       issuer: 'صادر کننده',

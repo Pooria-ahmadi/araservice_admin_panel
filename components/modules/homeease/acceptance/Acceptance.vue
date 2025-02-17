@@ -1,5 +1,6 @@
 <template>
     <section>
+        <LayoutsToolbar />
         <ModulesHomeeaseAcceptanceSubSearchInUsers @select-searched-user="selectSearchedUser" />
         <ModulesHomeeaseAcceptanceSubSearchInMap @update-coordinates="updateCoordinate" />
         <ModulesHomeeaseAcceptanceSubMapView :coordinates="coordinates" />
@@ -37,6 +38,14 @@ import { useNuxtApp } from '#app';
 import { ref, onMounted, toRaw } from 'vue'
 import { useToast } from "primevue/usetoast";
 import { useLoadingStore } from '@/stores/loading';
+import { useKeyboardShortcuts } from '~/composables/useKeyboardShortcuts';
+
+useKeyboardShortcuts({
+    's': () => submitForm(),
+    'l': () => console.log('رفتن به لیست'),
+    'enter': () => console.log('اینتر زده شد'),
+    'escape': () => console.log('ESC فشرده شد'),
+});
 
 const loadingStore = useLoadingStore();
 const toast = useToast();
