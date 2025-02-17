@@ -53,7 +53,7 @@ import { useLoadingStore } from '@/stores/loading';
 import { zodResolver } from '@primevue/forms/resolvers/zod';
 import { z } from 'zod';
 import { useToast } from "primevue/usetoast";
-import { useI18n } from 'vue-i18n'; // 👈 اضافه کردن ایمپورت
+import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const loadingStore = useLoadingStore();

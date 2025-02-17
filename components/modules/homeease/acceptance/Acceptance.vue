@@ -39,12 +39,12 @@ import { ref, onMounted, toRaw } from 'vue'
 import { useToast } from "primevue/usetoast";
 import { useLoadingStore } from '@/stores/loading';
 import { useKeyboardShortcuts } from '~/composables/useKeyboardShortcuts';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 useKeyboardShortcuts({
     's': () => submitForm(),
-    'l': () => console.log('رفتن به لیست'),
-    'enter': () => console.log('اینتر زده شد'),
-    'escape': () => console.log('ESC فشرده شد'),
 });
 
 const loadingStore = useLoadingStore();
@@ -102,16 +102,16 @@ const selectTechnicianDetails = (item) => {
 const submitForm = async () => {
     try {
         if (!formData.value.fk_technician)
-            toast.add({ severity: 'error', summary: 'خطای اطلاعات ورودی', detail: 'تکنسین را انتخاب نمایید', life: 2000 });
+            toast.add({ severity: 'error', summary: t('validation.input_error'), detail: t('error.technician_required'), life: 2000 });
         else if (!formData.value.fk_useraddress)
-            toast.add({ severity: 'error', summary: 'خطای اطلاعات ورودی', detail: 'آدرس را انتخاب نمایید', life: 2000 });
+            toast.add({ severity: 'error', summary: t('validation.input_error'), detail: t('error.address_required'), life: 2000 });
         else if (!formData.value.fk_element)
-            toast.add({ severity: 'error', summary: 'خطای اطلاعات ورودی', detail: 'دستگاه را انتخاب نمایید', life: 2000 });
+            toast.add({ severity: 'error', summary: t('validation.input_error'), detail: t('error.device_required'), life: 2000 });
         else if (!formData.value.issue)
-            toast.add({ severity: 'error', summary: 'خطای اطلاعات ورودی', detail: 'مشکل را وارد نمایید', life: 2000 });
+            toast.add({ severity: 'error', summary: t('validation.input_error'), detail: t('error.issue_required'), life: 2000 });
         else {
             await $servapi.post('create-reception', formData.value);
-            toast.add({ severity: 'success', summary: 'تایید!', detail: 'اطلاعات با موفقیت ثبت شد', life: 2000 });
+            toast.add({ severity: 'success', summary: $t('success.reception_submitted'), detail: $t('success.reception_submitted'), life: 2000 });
             resetFormData();
         }
     } catch (error) {

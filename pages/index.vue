@@ -3,12 +3,12 @@
     <LayoutsNavbar />
     <LayoutsSidebar />
     <div class="flex justify-end min-h-screen bg-gray-100">
-      <div class="w-11/12 bg-white rounded-lg shadow-lg md:ml-4 mt-4">
-        <Tabs value="0">
+      <div class="w-11/12 bg-white rounded-lg shadow-lg md:ml-8 mt-4">
+        <Tabs v-model:value="tabStore.activeTab">
           <TabList class="bg-gray-100">
-            <Tab v-for="(tab, index) in tabStore.tabs" :value="tab.value" :key="tab.title" as="div"
+            <Tab v-for="(tab, index) in tabStore.tabs" :value="tab.pk_menu" :key="tab.pk_menu" as="div"
               class="flex items-center gap-2">
-              <button @click.stop="closeTab(tab.pk_menu, index)"
+              <button @click="tabStore.removeTab(tab.pk_menu)"
                 class="mr-2 h-6 flex items-center justify-center text-xs rounded-full transition duration-200">
                 ✖
               </button>
@@ -16,9 +16,12 @@
             </Tab>
           </TabList>
           <TabPanels>
-            <TabPanel v-for="(tab, index) in tabStore.tabs" :value="tab.value" :key="tab.component" as="p" class="m-0">
-              <component :is="getComponent(tab.component)" v-if="getComponent(tab.component)" />
-            </TabPanel>
+            <keep-alive>
+              <TabPanel v-for="(tab, index) in tabStore.tabs" :value="tab.pk_menu" :key="tab.pk_menu" as="p"
+                class="m-0">
+                <component :is="getComponent(tab.component)" v-if="getComponent(tab.component)" />
+              </TabPanel>
+            </keep-alive>
           </TabPanels>
         </Tabs>
       </div>
@@ -27,30 +30,24 @@
 </template>
 
 <script setup>
+import { defineAsyncComponent, ref } from 'vue';
+import { useTabsStore } from '@/stores/tabs';
+import { shallowRef } from 'vue';
+
+const allComponents = import.meta.glob('@/components/**/*.vue');
+const tabStore = useTabsStore();
+const loadedComponents = shallowRef({});
+
 definePageMeta({
   middleware: 'auth'
 });
 
-import { defineAsyncComponent, ref } from 'vue';
-import { useTabsStore } from '@/stores/tabs';
-
-const allComponents = import.meta.glob('@/components/**/*.vue');
-
-const tabStore = useTabsStore();
-const activeTabIndex = ref(0);
-
 const getComponent = (componentName) => {
-  if (!componentName || !allComponents[`/components/${componentName}.vue`]) return null;
-  return defineAsyncComponent(allComponents[`/components/${componentName}.vue`]);
-};
-
-const closeTab = (tabId, index) => {
-  tabStore.removeTab(tabId);
-  if (tabStore.tabs.length > 0) {
-    activeTabIndex.value = index === 0 ? 0 : index - 1;
-  } else {
-    activeTabIndex.value = 0;
+  if (!componentName) return null;
+  if (!loadedComponents.value[componentName]) {
+    loadedComponents.value[componentName] = defineAsyncComponent(allComponents[`/components/${componentName}.vue`]);
   }
+  return loadedComponents.value[componentName];
 };
 </script>
 

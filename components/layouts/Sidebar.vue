@@ -1,36 +1,42 @@
 <template>
-  <div class="relative hidden lg:block" style="z-index:1020;">
+  <div class="relative hidden lg:block z-[1020]">
     <div
       class="fixed z-10 right-0 top-0 h-screen bg-white shadow-lg transition-all duration-300 flex flex-col items-center py-4"
       :class="visible ? 'w-64' : 'w-20'">
       <button @click="toggleSidebar"
-        class="absolute left-0 mt-10 -translate-x-1/2 bg-blue-500 w-8 h-8 flex items-center justify-center rounded-full shadow-md">
-        <img :src="visible ? '/layout/Left.png' : '/layout/right.png'" />
+        class="absolute left-0 mt-10 -translate-x-1/2 bg-blue-500 w-6 h-6 flex items-center justify-center rounded-full shadow-md">
+        <Icon class="text-white" :name="visible ? 'uil:angle-left' : 'uil:angle-right'" />
       </button>
       <div class="flex flex-col items-center justify-center w-full mt-6">
         <div v-if="visible">
           <img src="/layout/logo.png" alt="" class="mx-auto">
-          <div class="relative">
-            <div class="absolute inset-y-0 end-6 flex items-center ps-3 pointer-events-none">
-            </div>
-            <input type="search" id="search" dir="rtl"
-              class="block w-full py-3 mt-10 ps-10 text-sm border border-gray-300 rounded-lg bg-gray-50"
-              placeholder="جستجو کنید..." required />
+          <div class="relative mt-6">
+            <Icon class="absolute z-[10] left-2 top-3" name="uil:search" style="font-size: 16px;" />
+            <FloatLabel variant="on">
+              <InputText id="on_label">
+              </InputText>
+              <label for="on_label">{{ $t('menu_search') }}</label>
+            </FloatLabel>
           </div>
-          <NuxtLink to="/" class="flex py-3 bg-sky-100 mt-10 pr-6 rounded-xl" dir="rtl">
-            <p class="pr-2">
-              داشبورد
-            </p>
-          </NuxtLink>
-          <div @click="openTab('0', 'پذیرش جدید', 'modules/homeease/acceptance/Acceptance')"
-            class="flex py-3 bg-sky-100 mt-4 pr-6 rounded-xl" dir="rtl">
-            <p class="pr-2">
-              ثبت پذیرش
-            </p>
-          </div>
+          <Accordion value="0">
+            <AccordionPanel v-for="menu in menus" :key="menu.title" :value="menu.value">
+              <AccordionHeader>{{ menu.menu }}</AccordionHeader>
+              <AccordionContent>
+                <div class="flex pb-2 text-gray-600" v-for="submenu in menu.submenus"
+                  @click="openTab(submenu.pk_menu, submenu.menu, submenu.component)">
+                  <div class="pt-1">
+                    <Icon :name="submenu.icon" style="font-size: 16px;" />
+                  </div>
+                  <p class="m-0 mr-2 cursor-pointer">
+                    {{ submenu.menu }}
+                  </p>
+                </div>
+              </AccordionContent>
+            </AccordionPanel>
+          </Accordion>
         </div>
         <div v-else>
-          <img src="/layout/logosidebar.png" alt="">
+          <img class="w-12 ml-4 mt-1" src="/layout/logosidebar.png" alt="">
         </div>
       </div>
     </div>
@@ -40,6 +46,27 @@
 <script setup>
 const visible = ref(false);
 
+const menus = ref([
+  {
+    menu: 'پذیرش',
+    value: '0',
+    pk_menu: 1,
+    submenus: [
+      {
+        pk_menu: '1',
+        icon: 'uil:plus-circle',
+        menu: 'پذیرش جدید',
+        component: 'modules/homeease/acceptance/Acceptance',
+      },
+      {
+        pk_menu: '2',
+        menu: 'پذیرش ها',
+        icon: 'uil:list-ul',
+        component: 'modules/homeease/acceptance/List',
+      },
+    ],
+  },
+]);
 
 const toggleSidebar = () => {
   visible.value = !visible.value;
@@ -47,9 +74,9 @@ const toggleSidebar = () => {
 
 import { useTabsStore } from '@/stores/tabs';
 
-const store = useTabsStore();
+const storeTab = useTabsStore();
 const openTab = (pk_menu, title, component) => {
-  store.addTab({ 'value': pk_menu, 'title': title, 'component': component });
+  storeTab.addTab({ 'pk_menu': pk_menu, 'title': title, 'component': component });
   toggleSidebar()
 };
 </script>
