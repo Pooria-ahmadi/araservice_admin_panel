@@ -1,31 +1,30 @@
 <template>
     <section>
-        <ModulesHomeeaseAcceptanceSubAcceptanceDetail />
         <ModulesHomeeaseAcceptanceSubSearchInUsers @select-searched-user="selectSearchedUser" />
         <ModulesHomeeaseAcceptanceSubSearchInMap @update-coordinates="updateCoordinate" />
         <ModulesHomeeaseAcceptanceSubMapView :coordinates="coordinates" />
-        <ModulesHomeeaseAcceptanceSubSelectDeviceDetails :select_device_details="selectDeviceDetails" />
-        <ModulesHomeeaseAcceptanceSubSelectTechnician :select_technician_details="selectTechnicianDetails" />
+        <ModulesHomeeaseAcceptanceSubSelectDeviceDetails @select_device_details="selectDeviceDetails" />
+        <ModulesHomeeaseAcceptanceSubSelectTechnician @select_technician_details="selectTechnicianDetails" />
         <div class="flex mt-3">
             <div class="w-11/12">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-4">
                     <div class="text-center w-full">
                         <FloatLabel variant="on">
-                            <InputText size="small" class="w-full h-24" v-model="formData.issue" />
+                            <InputText size="small" class="w-full h-14" v-model="formData.issue" />
                             <label>{{ $t('issue') }}</label>
                         </FloatLabel>
                     </div>
                     <div class="text-center w-full">
                         <FloatLabel variant="on">
-                            <InputText size="small" class="w-full h-24" v-model="formData.operatordescription" />
+                            <InputText size="small" class="w-full h-14" v-model="formData.operatordescription" />
                             <label>{{ $t('operator_description') }}</label>
                         </FloatLabel>
                     </div>
                     <div class="flex items-center h-full">
-                        <Button severity="success" class="w-full shadow-green-500/50 bg-green-500" raised :loading="loadingStore.isLoading"
-                            @click="submitForm">
+                        <Button severity="success" class="w-full shadow-green-500/50 bg-green-500" raised
+                            :loading="loadingStore.isLoading" @click="submitForm">
                             {{ $t('submit_reception') }}
-                            <Icon name="uil:check-circle" class="text-white " />
+                            <Icon name="uil:check-circle" class="text-white" />
                         </Button>
                     </div>
                 </div>
@@ -62,28 +61,25 @@ const selectDeviceDetails = (item) => {
         formData.value.fk_subelement = item.value.fk_subelement
 }
 const selectSearchedUser = (item) => {
-    if (item.value.pk_province)
-        formData.value.fk_province = item.value.pk_province
-    if (item.value.pk_city)
-        formData.value.fk_city = item.value.pk_city
-    if (item.value.id)
-        formData.value.fk_customer = item.value.id
-    if (item.value.fk_useraddress)
-        formData.value.fk_useraddress = item.value.fk_useraddress
-    if (item.value.customerfullname)
-        formData.value.customerfullname = item.value.customerfullname
-    if (item.value.mobile)
-        formData.value.mobile = item.value.mobile
-    if (item.value.phone)
-        formData.value.phone = item.value.phone
-    if (item.value.subscriptionid)
-        formData.value.subscriptionid = item.value.subscriptionid
+    const fields = {
+        fk_province: 'pk_province',
+        fk_city: 'pk_city',
+        fk_customer: 'id',
+        fk_useraddress: 'fk_useraddress',
+        customerfullname: 'customerfullname',
+        mobile: 'mobile',
+        phone: 'phone',
+        subscriptionid: 'subscriptionid'
+    };
 
-    coordinates.value = []
-    if (item.value.lat)
-        coordinates.value[0] = item.value.lat
-    if (item.value.lon)
-        coordinates.value[1] = item.value.lon
+    Object.keys(fields).forEach(key => {
+        if (item[fields[key]])
+            formData.value[key] = item[fields[key]];
+    })
+
+    coordinates.value = [];
+    if (item.lat && item.lon)
+        coordinates.value = [item.lat, item.lon];
 }
 const selectTechnicianDetails = (item) => {
     if (item.value.fk_receptiontype)
@@ -95,6 +91,7 @@ const selectTechnicianDetails = (item) => {
 }
 
 const submitForm = async () => {
+    console.log(formData.value)
     try {
         if (!formData.value.fk_technician)
             toast.add({ severity: 'error', summary: 'خطای اطلاعات ورودی', detail: 'تکنسین را انتخاب نمایید', life: 2000 });

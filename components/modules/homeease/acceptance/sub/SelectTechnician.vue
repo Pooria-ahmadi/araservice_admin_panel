@@ -100,6 +100,8 @@ onMounted(() => {
     technicianDetail.value.fk_receptiontype = activeReceptionType.value.pk_receptiontype
     technicianDetail.value.fk_technicianselecttype = activeTechnicianSelectType.value.pk_technicianselecttype
     technicianDetail.value.fk_receptionstatus = 1
+
+    emit('select_technician_details', technicianDetail)
 })
 
 </script>

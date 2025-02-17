@@ -29,7 +29,8 @@
               داشبورد
             </p>
           </NuxtLink>
-          <div @click="openTab('modules/homeease/acceptance/Acceptance', 'پذیرش جدید')" class="flex py-3 bg-sky-100 mt-4 pr-6 rounded-xl" dir="rtl">
+          <div @click="openTab('0', 'پذیرش جدید', 'modules/homeease/acceptance/Acceptance')"
+            class="flex py-3 bg-sky-100 mt-4 pr-6 rounded-xl" dir="rtl">
             <p class="pr-2">
               ثبت پذیرش
             </p>
@@ -54,8 +55,8 @@ const toggleSidebar = () => {
 import { useTabsStore } from '@/stores/tabs';
 
 const store = useTabsStore();
-const openTab = (id, title) => {
-  store.addTab({ id, title, component: id });
+const openTab = (pk_menu, title, component) => {
+  store.addTab({ 'value': pk_menu, 'title': title, 'component': component });
   toggleSidebar()
 };
 </script>
