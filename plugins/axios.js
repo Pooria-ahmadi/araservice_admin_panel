@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useToast } from 'primevue/usetoast';
-import { useLoadingStore } from '@/stores/loading'; // ایمپورت استور
+import { useLoadingStore } from '@/stores/loading'; 
 
 export default defineNuxtPlugin((nuxtApp) => {
   const { public: { apiBaseUrlAcc, apiBaseUrlServ } } = useRuntimeConfig();

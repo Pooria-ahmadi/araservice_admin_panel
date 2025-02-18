@@ -57,7 +57,7 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const loadingStore = useLoadingStore();
-const { $servapi, $updateAuthHeader } = useNuxtApp();
+const { $accapi, $updateAuthHeader } = useNuxtApp();
 const router = useRouter();
 const toast = useToast();
 
@@ -76,13 +76,13 @@ const resolver = ref(zodResolver(
 const onFormSubmit = async ({ values, valid }) => {
     if (valid) {
         try {
-            const response = await $servapi.post('auth/login', {
+            const response = await $accapi.post('auth/login', {
                 email: values.email,
                 password: values.password,
             });
-            const access_token = response.data.access_token;
-            localStorage.setItem('jwt_token', access_token);
-            $updateAuthHeader(access_token);
+            const token = response.data.token;
+            localStorage.setItem('jwt_token', token);
+            $updateAuthHeader(token);
             router.push('/');
         } catch (error) {
             toast.add({ severity: 'error', summary: 'Login failed!', detail: error.response?.data?.message, life: 3000 });

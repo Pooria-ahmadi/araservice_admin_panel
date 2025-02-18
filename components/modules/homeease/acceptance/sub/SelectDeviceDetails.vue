@@ -45,8 +45,8 @@
 </template>
 
 <script setup>
-import { useNuxtApp } from '#app';
 import { ref } from 'vue'
+import { useNuxtApp } from '#app';
 
 const { $servapi } = useNuxtApp();
 const emit = defineEmits(["select_device_details"]);

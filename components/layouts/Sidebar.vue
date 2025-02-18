@@ -44,39 +44,50 @@
 </template>
 
 <script setup>
-const visible = ref(false);
+import { ref } from 'vue'
+import { useNuxtApp } from '#app';
+import { useTabsStore } from '@/stores/tabs';
 
-const menus = ref([
-  {
-    menu: 'پذیرش',
-    value: '0',
-    pk_menu: 1,
-    submenus: [
-      {
-        pk_menu: '1',
-        icon: 'uil:plus-circle',
-        menu: 'پذیرش جدید',
-        component: 'modules/homeease/acceptance/Acceptance',
-      },
-      {
-        pk_menu: '2',
-        menu: 'پذیرش ها',
-        icon: 'uil:list-ul',
-        component: 'modules/homeease/acceptance/List',
-      },
-    ],
-  },
-]);
+const { $accapi } = useNuxtApp();
+
+const storeTab = useTabsStore();
+const visible = ref(false);
+const menus = ref([]);
+const submenus = ref([])
+
+const getMenus = async () => {
+  try {
+    const response = await $accapi.get('auth-user-menus');
+    response.data.forEach(element => {
+      if (element.menulevel == 1) {
+        element.submenus = [];
+        response.data.forEach(subelement => {
+          if (subelement.menulevel == 2 && subelement.fk_menu == element.pk_menu) {
+            element.submenus.push(subelement)
+          }
+        });
+
+        menus.value.push(element)
+      }
+    });
+    console.log(menus)
+
+  } catch (error) {
+    console.error('Error fetching brands:', error);
+  }
+}
 
 const toggleSidebar = () => {
   visible.value = !visible.value;
 };
 
-import { useTabsStore } from '@/stores/tabs';
 
-const storeTab = useTabsStore();
 const openTab = (pk_menu, title, component) => {
   storeTab.addTab({ 'pk_menu': pk_menu, 'title': title, 'component': component });
   toggleSidebar()
 };
+
+onMounted(() => {
+  getMenus()
+})
 </script>
