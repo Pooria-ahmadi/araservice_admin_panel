@@ -10,25 +10,24 @@
       <div class="flex flex-col items-center justify-center w-full mt-6">
         <div v-if="visible">
           <img src="/layout/logo.png" alt="" class="mx-auto">
-          <div class="relative mt-6">
-            <Icon class="absolute z-[10] left-2 top-3" name="uil:search" style="font-size: 16px;" />
-            <FloatLabel variant="on">
-              <InputText id="on_label">
-              </InputText>
-              <label for="on_label">{{ $t('menu_search') }}</label>
-            </FloatLabel>
+          <div class="mt-6">
+            <IconField>
+              <InputIcon>
+                <Icon name="uil:search" style="font-size: 16px;" />
+              </InputIcon>
+              <InputText :placeholder="$t('menu_search')" />
+            </IconField>
           </div>
           <Accordion value="0">
-            <AccordionPanel v-for="menu in menus" :key="menu.title" :value="menu.value">
-              <AccordionHeader>{{ menu.menu }}</AccordionHeader>
+            <AccordionPanel v-for="parentMenu in parentMenus" :key="parentMenu.title" :value="parentMenu.value">
+              <AccordionHeader>{{ parentMenu.menu }}</AccordionHeader>
               <AccordionContent>
-                <div class="flex pb-2 text-gray-600" v-for="submenu in menu.submenus"
-                  @click="openTab(submenu.pk_menu, submenu.menu, submenu.component)">
+                <div class="flex pb-2 text-gray-600" v-for="menu in parentMenu.menus" @click="openTab(menu)">
                   <div class="pt-1">
-                    <Icon :name="submenu.icon" style="font-size: 16px;" />
+                    <Icon :name="menu.icon" style="font-size: 16px;" />
                   </div>
                   <p class="m-0 mr-2 cursor-pointer">
-                    {{ submenu.menu }}
+                    {{ menu.menu }}
                   </p>
                 </div>
               </AccordionContent>
@@ -42,52 +41,36 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref } from 'vue'
 import { useNuxtApp } from '#app';
 import { useTabsStore } from '@/stores/tabs';
 
 const { $accapi } = useNuxtApp();
-
-const storeTab = useTabsStore();
+const tabStore = useTabsStore();
 const visible = ref(false);
-const menus = ref([]);
-const submenus = ref([])
+const parentMenus = ref([]);
 
 const getMenus = async () => {
   try {
-    const response = await $accapi.get('auth-user-menus');
-    response.data.forEach(element => {
-      if (element.menulevel == 1) {
-        element.submenus = [];
-        response.data.forEach(subelement => {
-          if (subelement.menulevel == 2 && subelement.fk_menu == element.pk_menu) {
-            element.submenus.push(subelement)
-          }
-        });
-
-        menus.value.push(element)
-      }
-    });
-    console.log(menus)
-
+    const { data } = await $accapi.get('auth-user-menus');
+    const structuredMenus = data.reduce((acc, item) => {
+      if (item.menulevel === 1)
+        acc.push({ ...item, menus: data.filter(sub => sub.menulevel === 2 && sub.fk_menu === item.pk_menu) });
+      return acc;
+    }, []);
+    parentMenus.value = structuredMenus;
   } catch (error) {
-    console.error('Error fetching brands:', error);
+    console.error('Error fetching menus:', error);
   }
-}
-
-const toggleSidebar = () => {
-  visible.value = !visible.value;
 };
 
+const toggleSidebar = () => (visible.value = !visible.value);
 
-const openTab = (pk_menu, title, component) => {
-  storeTab.addTab({ 'pk_menu': pk_menu, 'title': title, 'component': component });
+const openTab = (menu) => {
+  tabStore.addTab(menu);
   toggleSidebar()
 };
 
-onMounted(() => {
-  getMenus()
-})
+onMounted(getMenus);
 </script>

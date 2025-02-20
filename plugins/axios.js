@@ -1,19 +1,21 @@
 import axios from 'axios';
 import { useToast } from 'primevue/usetoast';
-import { useLoadingStore } from '@/stores/loading'; 
+import { useLoadingStore } from '@/stores/loading';
 
 export default defineNuxtPlugin((nuxtApp) => {
-  const { public: { apiBaseUrlAcc, apiBaseUrlServ } } = useRuntimeConfig();
+  const { public: { apiBaseUrlAcc, apiBaseUrlServ, apiBaseUrlFree } } = useRuntimeConfig();
   const toast = useToast();
   const i18n = nuxtApp.$i18n;
   const t = i18n?.t || ((key) => key);
 
   const loadingStore = useLoadingStore();
 
+  const freeapi = axios.create({ baseURL: apiBaseUrlFree });
   const accapi = axios.create({ baseURL: apiBaseUrlAcc });
   const servapi = axios.create({ baseURL: apiBaseUrlServ });
 
   const updateAuthHeader = (token) => {
+    freeapi.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     accapi.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     servapi.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   };
@@ -62,6 +64,20 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
   );
 
+  freeapi.interceptors.request.use(
+    (config) => {
+      if (!checkInternetConnection()) {
+        return Promise.reject({ message: t('error.no_internet') });
+      }
+      loadingStore.setLoading(true);
+      return config;
+    },
+    (error) => {
+      loadingStore.setLoading(false);
+      return Promise.reject(error);
+    }
+  );
+
   servapi.interceptors.request.use(
     (config) => {
       if (!checkInternetConnection()) {
@@ -74,6 +90,14 @@ export default defineNuxtPlugin((nuxtApp) => {
       loadingStore.setLoading(false);
       return Promise.reject(error);
     }
+  );
+
+  freeapi.interceptors.response.use(
+    (response) => {
+      loadingStore.setLoading(false);
+      return response;
+    },
+    errorHandler
   );
 
   accapi.interceptors.response.use(
@@ -96,6 +120,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     provide: {
       accapi,
       servapi,
+      freeapi,
       updateAuthHeader,
     },
   };

@@ -12,7 +12,13 @@
 <script setup>
 import { ref } from 'vue';
 import { useRuntimeConfig } from '#app';
+import { watch } from 'vue';
+
 const emit = defineEmits(["update-coordinates"]);
+
+const props = defineProps({
+    reset: Number
+});
 
 const config = useRuntimeConfig();
 
@@ -22,6 +28,11 @@ const isFetching = ref(false);
 const location = ref({ coords: { latitude: 0, longitude: 0 } });
 const gettingLocation = ref(false);
 const xapikey = config.public.mapIrApiKey;
+
+const resetFormData = () => {
+    selected.value = null;
+    searchedResponse.value = [];
+};
 
 const searchAddress = async (event) => {
     const query = event.query;
@@ -63,4 +74,8 @@ const selectSearchedMap = (event) => {
     ];
     emit("update-coordinates", coordinates)
 };
+
+watch(() => props.reset, () => {
+    resetFormData();
+});
 </script>

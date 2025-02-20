@@ -6,20 +6,20 @@
       <div class="w-11/12 bg-white rounded-lg shadow-lg md:ml-8 mt-4">
         <Tabs v-model:value="tabStore.activeTab">
           <TabList class="bg-gray-100">
-            <Tab v-for="(tab, index) in tabStore.tabs" :value="tab.pk_menu" :key="tab.pk_menu" as="div"
+            <Tab v-for="(tab, index) in tabStore.tabs" :value="tab.id" :key="tab.id" as="div"
               class="flex items-center gap-2">
-              <button @click="tabStore.removeTab(tab.pk_menu)"
-                class="mr-2 h-6 flex items-center justify-center text-xs rounded-full transition duration-200">
+              <button @click="tabStore.removeTab(tab.id)"
+                class="mr-2 h-4 w-4 flex items-center justify-center text-xs rounded-full hover:bg-red-400 hover:text-white transition duration-200">
                 ✖
               </button>
-              <span class="ml-2 text-xs p-0 m-0">{{ tab.title }}</span>
+              <span class="ml-2 text-xs p-0 m-0"> {{ tab.id }} {{ tab.menu }}</span>
             </Tab>
           </TabList>
           <TabPanels>
             <keep-alive>
-              <TabPanel v-for="(tab, index) in tabStore.tabs" :value="tab.pk_menu" :key="tab.pk_menu" as="p"
-                class="m-0">
-                <component :is="getComponent(tab.component)" v-if="getComponent(tab.component)" />
+              <TabPanel v-for="(tab, index) in tabStore.tabs" :value="tab.id" :key="tab.id" as="p" class="m-0">
+                <component :menu="tab" :record="tab.record" :is="getComponent(tab.component)"
+                  v-if="getComponent(tab.component)" />
               </TabPanel>
             </keep-alive>
           </TabPanels>

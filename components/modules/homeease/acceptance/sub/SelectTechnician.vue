@@ -37,6 +37,11 @@
 <script setup>
 import { useNuxtApp } from '#app';
 import { ref } from 'vue'
+import { watch } from 'vue';
+
+const props = defineProps({
+    reset: Number
+});
 
 const { $servapi } = useNuxtApp();
 const emit = defineEmits(["select_technician_details"]);
@@ -95,6 +100,18 @@ const selectTechnician = () => {
     emit('select_technician_details', technicianDetail)
 }
 
+
+const resetFormData = () => {
+    activeReceptionType.value = receptionTypes.value[0];
+    activeTechnicianSelectType.value = technicianSelectTypes.value[0];
+    activeTechnician.value = {};
+    technicianDetail.value = {
+        fk_receptiontype: activeReceptionType.value.pk_receptiontype,
+        fk_technicianselecttype: activeTechnicianSelectType.value.pk_technicianselecttype,
+        fk_receptionstatus: 1
+    };
+};
+
 onMounted(() => {
     getTechnicians()
     technicianDetail.value.fk_receptiontype = activeReceptionType.value.pk_receptiontype
@@ -103,5 +120,9 @@ onMounted(() => {
 
     emit('select_technician_details', technicianDetail)
 })
+
+watch(() => props.reset, () => {
+    resetFormData();
+});
 
 </script>

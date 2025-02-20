@@ -27,7 +27,8 @@ export default defineNuxtConfig({
         public: {
             mapIrApiKey: process.env.MAP_IR_API_KEY,
             apiBaseUrlAcc: process.env.API_BASE_URL_ACC,
-            apiBaseUrlServ: process.env.API_BASE_URL_SERV
+            apiBaseUrlServ: process.env.API_BASE_URL_SERV,
+            apiBaseUrlFree: process.env.API_BASE_URL_FREE
         }
     },
     i18n: {

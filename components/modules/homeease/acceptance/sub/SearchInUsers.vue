@@ -103,12 +103,15 @@
 import { useNuxtApp } from '#app';
 import { ref, onMounted, onUnmounted } from 'vue'
 import debounce from 'lodash/debounce'
-import { useLoadingStore } from '@/stores/loading';
+import { watch } from 'vue';
+
+
+const props = defineProps({
+    reset: Number
+});
 
 const customerfullnameRef = ref(null);
-const loadingStore = useLoadingStore();
 const emit = defineEmits(["select-searched-user"]);
-const toast = useToast();
 const { $servapi } = useNuxtApp();
 
 const userSearchResults = ref([])
@@ -199,9 +202,17 @@ const handleClickOutside = (event) => {
     }
 }
 
+const resetFormData = () => {
+    user.value = {};
+    activeProvince.value = null;
+    activeCity.value = null;
+    userSearchResults.value = [];
+    seacharea.value?.classList.add('hidden');
+};
+
 onMounted(() => {
     nextTick(() => {
-            customerfullnameRef.value.$el.focus();
+        customerfullnameRef.value.$el.focus();
     });
 
     getProvinces()
@@ -211,6 +222,10 @@ onMounted(() => {
 onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside)
 })
+
+watch(() => props.reset, () => {
+    resetFormData();
+});
 
 </script>
 

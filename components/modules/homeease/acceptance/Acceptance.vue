@@ -1,11 +1,15 @@
 <template>
     <section>
-        <LayoutsToolbar />
-        <ModulesHomeeaseAcceptanceSubSearchInUsers @select-searched-user="selectSearchedUser" />
-        <ModulesHomeeaseAcceptanceSubSearchInMap @update-coordinates="updateCoordinate" />
-        <ModulesHomeeaseAcceptanceSubMapView :coordinates="coordinates" />
-        <ModulesHomeeaseAcceptanceSubSelectDeviceDetails @select_device_details="selectDeviceDetails" />
-        <ModulesHomeeaseAcceptanceSubSelectTechnician @select_technician_details="selectTechnicianDetails" />
+        <LayoutsToolbar :menu="props.menu" @form-refresh="resetFormData" />
+        <ModulesHomeeaseAcceptanceSubSearchInUsers v-model:reset="formResetSignal"
+            @select-searched-user="selectSearchedUser" />
+        <ModulesHomeeaseAcceptanceSubSearchInMap v-model:reset="formResetSignal"
+            @update-coordinates="updateCoordinate" />
+        <ModulesHomeeaseAcceptanceSubMapView v-model:reset="formResetSignal" :coordinates="coordinates" />
+        <ModulesHomeeaseAcceptanceSubSelectDeviceDetails v-model:reset="formResetSignal"
+            @select_device_details="selectDeviceDetails" />
+        <ModulesHomeeaseAcceptanceSubSelectTechnician v-model:reset="formResetSignal"
+            @select_technician_details="selectTechnicianDetails" />
         <div class="flex mt-3">
             <div class="w-11/12">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-4">
@@ -41,22 +45,34 @@ import { useLoadingStore } from '@/stores/loading';
 import { useKeyboardShortcuts } from '~/composables/useKeyboardShortcuts';
 import { useI18n } from 'vue-i18n';
 
+const props = defineProps({
+    record: Object,
+    menu: Object
+});
+
 const { t } = useI18n();
 
 useKeyboardShortcuts({
     's': () => submitForm(),
 });
 
+
 const loadingStore = useLoadingStore();
 const toast = useToast();
 const { $servapi } = useNuxtApp();
-
+const formResetSignal = ref(0);
 const formData = ref({});
 const coordinates = ref([])
 
 onMounted(() => {
+    if (props.record && props.record != undefined)
+        formData.value = props.record
     formData.value.createType = 'full'
 })
+
+const getDetail = () => {
+
+}
 
 const updateCoordinate = ((item) => {
     coordinates.value = item;
@@ -140,5 +156,6 @@ const resetFormData = () => {
     coordinates.value = [];
     coordinates.value[0] = 35.730041131496804;
     coordinates.value[1] = 51.39303922428917;
+    formResetSignal.value++; 
 };
 </script>

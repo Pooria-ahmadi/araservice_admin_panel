@@ -47,12 +47,15 @@
 <script setup>
 import { ref } from 'vue'
 import { useNuxtApp } from '#app';
+import { watch } from 'vue';
 
-const { $servapi } = useNuxtApp();
+
+const props = defineProps({
+    reset: Number
+});
+
 const emit = defineEmits(["select_device_details"]);
-
-
-
+const { $servapi } = useNuxtApp();
 const deviceTypes = ref([]);
 const deviceModels = ref([]);
 const brands = ref([]);
@@ -113,8 +116,21 @@ const getDeviceModels = async () => {
     }
 };
 
+const resetFormData = () => {
+    activeBrand.value = {};
+    activeDeviceType.value = {};
+    activeDeviceModel.value = {};
+    deviceDetails.value = {};
+    deviceTypes.value = [];
+    deviceModels.value = [];
+};
+
 
 onMounted(() => {
     getBrands();
 })
+
+watch(() => props.reset, () => {
+    resetFormData();
+});
 </script>
